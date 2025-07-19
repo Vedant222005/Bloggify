@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('./partials/head') %>
+  <title><%= blog.title %> | Blog View</title>
+
+  <!-- Vanilla Tilt CSS/JS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.3/vanilla-tilt.min.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  
+  <!-- Navbar -->
+  <%- include('./partials/nav') %>
+
+  <!-- Flash Messages -->
+  <% if (success && success.length > 0) { %>
+    <div id="flash-success" class="fixed top-6 right-6 bg-green-100 text-green-800 border border-green-400 px-4 py-3 rounded shadow-lg z-50">
+      <%= success %>
+    </div>
+  <% } %>
+  <% if (error && error.length > 0) { %>
+    <div id="flash-error" class="fixed top-6 right-6 bg-red-100 text-red-800 border border-red-400 px-4 py-3 rounded shadow-lg z-50">
+      <%= error %>
+    </div>
+  <% } %>
+
+  <!-- Blog Container -->
+  <div class="max-w-4xl mx-auto px-4 py-10">
+
+    <!-- 3D Tilt Cover Image -->
+    <div class="mb-8" data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.2">
+      <img src="<%= blog.coverImageURL %>" alt="Cover Image"
+           class="w-full h-80 object-cover rounded-2xl shadow-xl border border-gray-200 hover:shadow-2xl transition duration-300" />
+    </div>
+
+    <!-- Blog Title -->
+    <h1 class="text-4xl font-bold mb-2"><%= blog.title %></h1>
+
+    <!-- Meta Info -->
+    <div class="flex justify-between items-center text-sm text-gray-600 mb-4">
+      <p>By <span class="font-medium text-indigo-600"><%= blog.author || "Anonymous" %></span></p>
+      <p><%= blog.createdAt.toDateString() %></p>
+    </div>
+
+    <!-- Like Button -->
+    <form action="/blog/<%= blog._id %>/like" method="POST" class="mb-8">
+      <button type="submit" class="flex items-center space-x-2 text-red-600 hover:text-red-800">
+        ❤️ <span><%= blog.likes %></span>
+      </button>
+    </form>
+
+    <!-- Blog Content -->
+    <div class="prose prose-lg max-w-none mb-12">
+      <%= blog.body %>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="bg-white p-6 rounded-xl shadow-md">
+      <h2 class="text-xl font-semibold mb-4 border-b pb-2">Comments</h2>
+
+      <!-- Existing Comments -->
+      <div class="space-y-4 mb-6">
+        <% blog.comments.forEach(comment => { %>
+          <div class="border p-3 rounded-md bg-gray-50">
+            <p class="text-gray-800"><%= comment.text %></p>
+            <p class="text-xs text-gray-500 mt-1">
+              By <%= comment.commentedBy?.username || 'Anonymous' %> on <%= new Date(comment.createdAt).toLocaleString() %>
+            </p>
+          </div>
+        <% }) %>
+      </div>
+
+      <!-- Comment Form -->
+      <% if (user) { %>
+        <form action="/blog/<%= blog._id %>/comments" method="POST">
+          <textarea name="comment" rows="3" required class="w-full border rounded-lg p-3 mb-2" placeholder="Write your comment..."></textarea>
+          <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg">
+            Post Comment
+          </button>
+        </form>
+      <% } else { %>
+        <div class="mt-6 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-lg p-4 shadow-sm flex items-start space-x-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-0.5 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 6.25v.25M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <p class="text-sm">
+            You must 
+            <a href="/user/signin" class="text-indigo-600 font-semibold hover:underline hover:text-indigo-700">sign in</a> 
+            to post a comment.
+          </p>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- Back & Follow Buttons -->
+    <div class="mt-8 flex items-center gap-4">
+      <a href="/" class="inline-flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg shadow hover:bg-indigo-700 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        Back 
+      </a>
+
+      <% if (user && blog.createdBy.toString() !== user._id.toString()) { %>
+        <% const isFollowing = user.following?.some(f => f.toString() === blog.createdBy.toString()); %>
+        <form action="/user/<%= isFollowing ? 'unfollow' : 'follow' %>/<%= blog.createdBy %>" method="POST" class="inline-block ml-2">
+          <button type="submit"
+            class="inline-flex items-center gap-1 text-sm font-medium px-3 py-1.5 rounded-full transition
+              <%= isFollowing
+                ? 'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100'
+                : 'bg-indigo-50 text-indigo-600 border border-indigo-200 hover:bg-indigo-100' %>">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+              fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="<%= isFollowing
+                  ? 'M6 18L18 6M6 6l12 12' // X icon
+                  : 'M12 4v16m8-8H4' %>" /> <!-- Plus icon -->
+            </svg>
+            <%= isFollowing ? 'Unfollow' : 'Follow' %>
+          </button>
+        </form>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <%- include('./partials/script') %>
+  <script>
+    VanillaTilt.init(document.querySelectorAll("[data-tilt]"), {
+      max: 15,
+      speed: 400,
+      glare: true,
+      "max-glare": 0.3,
+    });
+  </script>
+</body>
+</html>

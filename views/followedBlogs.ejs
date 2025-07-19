@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('./partials/head') %>
+    <title>HOME PAGE</title>
+</head>
+<body>
+    
+    <!-- Include Navbar here -->
+    <%- include('./partials/nav') %>
+
+    <!-- Flash messages (will show on top of the page) -->
+    <% if (success && success.length > 0) { %>
+        <div id="flash-success" class="fixed top-6 right-6 bg-green-100 text-green-800 border border-green-400 px-4 py-3 rounded shadow-lg transition-all duration-500 z-50">
+          <%= success %>
+        </div>
+    <% } %>
+
+    <% if (error && error.length > 0) { %>
+        <div id="flash-error" class="fixed top-6 right-6 bg-red-100 text-red-800 border border-red-400 px-4 py-3 rounded shadow-lg transition-all duration-500 z-50">
+          <%= error %>
+        </div>
+    <% } %>
+    
+    <% if (bloggerName==user.username) { %>
+      <h1 class="text-2xl font-bold">Blogs by You</h1>
+    <% } else { %>
+    <h1 class="text-2xl font-bold">Blogs by <%= bloggerName %></h1>
+    <%}%>
+    <% if (blogs.length === 0) { %>
+      <p class="text-gray-500">NO Blog posted yet.</p>
+    <% } else { %>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4 py-6">
+        <% blogs.forEach(blog => { %>
+          <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+            
+            <!-- Cover Image -->
+            <img src="<%= blog.coverImageURL %>" alt="Cover Image"
+                 class="w-full h-48 object-cover">
+      
+            <!-- Blog Content -->
+            <div class="p-4">
+              <h2 class="text-xl font-semibold text-gray-800 mb-2"><%= blog.title %></h2>
+              <p class="text-gray-600 text-sm line-clamp-3 mb-4">
+                <%= blog.body.substring(0, 150) %>...
+              </p>
+      
+              <div class="flex justify-between items-center text-xs text-gray-500 mb-2">
+                <span>By <%= blog.author || "Anonymous" %></span>
+                <span><%= blog.createdAt.toDateString() %></span>
+              </div>
+      
+              <a href="/blog/<%= blog._id %>"
+                 class="inline-block text-indigo-600 hover:text-indigo-800 font-medium text-sm">
+                Read More →
+              </a>
+               
+              <!-- for My blog section -->
+              <% if (user && user._id.toString() === blog.createdBy.toString()) { %>
+                <form action="/blog/delete/<%= blog._id %>" method="POST" class="inline-block ml-4">
+                  <button type="submit" class="text-red-500 hover:text-red-700 text-sm font-medium">
+                    Delete
+                  </button>
+                </form>
+              <% } %>   
+                       
+            </div>
+          </div>
+        <% }) %>
+      </div> <%} %>
+      
+    <!-- Include your scripts -->
+    <%- include('./partials/script') %>
+</body>
+</html>

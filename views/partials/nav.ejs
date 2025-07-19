@@ -1,0 +1,88 @@
+<nav class="bg-white text-gray-800 shadow-md">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+
+      <!-- Bloggify Logo (left-most corner) -->
+      <div class="flex-shrink-0">
+        <a href="#" class="text-2xl font-bold text-indigo-600 hover:text-indigo-500 transition-all">Bloggify</a>
+      </div>
+
+      <!-- Desktop Menu -->
+      <div class="hidden md:flex flex-1 items-center justify-center space-x-6">
+        <a href="/user/coverpage" class="hover:text-indigo-500 px-3 py-2 rounded-md text-lg font-medium transition">
+          <!-- Heroicons Home Icon -->
+              <div class="flex items-center">
+                <img src="/images/home.webp" alt="Home Icon" class="w-6 h-6 mr-2">
+                <span>Home</span>
+              </div>
+        </a>
+        <a href="/" class="hover:text-indigo-500 px-3 py-2 rounded-md text-lg font-medium transition">View Blogs</a>
+        <% if (user) { %>
+          <a href="/blog/create" class="hover:text-indigo-500 px-3 py-2 rounded-md text-lg font-medium transition">Add Blog</a>
+        <% } %>
+      </div>
+
+      <!-- Profile or Auth Links -->
+      <div class="hidden md:flex items-center space-x-4">
+        <% if (user) { %>
+          <a href="/blog/<%= user._id %>/blogs"class="hover:text-indigo-500 px-3 py-2 rounded-md text-lg font-medium">
+            MY Blogs
+          </a>
+          <a href="/user/followed-bloggers" class="hover:text-indigo-500 px-3 py-2 rounded-md text-lg font-medium">Followed Bloggers</a>
+          <a href="/user/profile" class="flex items-center hover:text-indigo-500 px-3 py-2 rounded-md text-lg font-medium transition">
+            <img src="<%= user?.profileImageURL || '/images/user.jpg' %>" alt="User Avatar" class="w-8 h-8 rounded-full mr-2">
+            <%= user.username %>
+          </a>
+        <% } else { %>
+          <a href="/user/signin" class="hover:text-indigo-500 px-3 py-2 rounded-md text-lg font-medium transition">Sign In</a>
+          <a href="/user/signup" class="hover:text-indigo-500 px-3 py-2 rounded-md text-lg font-medium transition">Create Account</a>
+        <% } %>
+      </div>
+
+      <!-- Hamburger button -->
+      <div class="md:hidden flex items-center">
+        <button id="menu-toggle" class="text-gray-800 hover:text-indigo-500 focus:outline-none">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="hidden md:hidden px-4 pt-2 pb-4 space-y-2 bg-white">
+    <a href="/user/coverpage" class="flex items-center hover:text-indigo-500 px-3 py-2 rounded-md text-lg font-medium transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2 7-7 7 7 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7z"/>
+      </svg>
+      Home
+    </a>    
+    <% if (user) { %>
+      <a href="/blog/<%= user._id %>/blogs"  class="block hover:text-indigo-500 px-3 py-2 rounded-md text-lg font-medium">
+        MY Blogs
+      </a>
+      <a href="/user/followed-bloggers" class="block hover:text-indigo-500 px-3 py-2 rounded-md text-lg font-medium">Followed Bloggers</a>
+      <a href="/blog/create" class="block hover:text-indigo-500 px-3 py-2 rounded-md text-lg font-medium">Add Blog</a>
+      <a href="/user/profile" class="flex items-center hover:text-indigo-500 px-3 py-2 rounded-md text-lg font-medium transition">
+        <img src="<%= user?.profileImageURL || '/images/user.jpg' %>" alt="User Avatar" class="w-8 h-8 rounded-full mr-2">
+        <%= user.username %>
+      </a>
+    <% } else { %>
+      <a href="/user/signin" class="block hover:text-indigo-500 px-3 py-2 rounded-md text-lg font-medium">Sign In</a>
+      <a href="/user/signup" class="block hover:text-indigo-500 px-3 py-2 rounded-md text-lg font-medium">Create Account</a>
+    <% } %>
+  </div>
+</nav>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const toggleBtn = document.getElementById("menu-toggle");
+    const mobileMenu = document.getElementById("mobile-menu");
+
+    toggleBtn.addEventListener("click", () => {
+      mobileMenu.classList.toggle("hidden");
+    });
+  });
+</script>

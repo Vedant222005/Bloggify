@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('./partials/head') %>
+    <title>Following Page</title>
+</head>
+<body>
+    
+    <!-- Include Navbar here -->
+    <%- include('./partials/nav') %>
+
+    <!-- Flash messages (will show on top of the page) -->
+    <% if (success && success.length > 0) { %>
+        <div id="flash-success" class="fixed top-6 right-6 bg-green-100 text-green-800 border border-green-400 px-4 py-3 rounded shadow-lg transition-all duration-500 z-50">
+          <%= success %>
+        </div>
+    <% } %>
+
+    <% if (error && error.length > 0) { %>
+        <div id="flash-error" class="fixed top-6 right-6 bg-red-100 text-red-800 border border-red-400 px-4 py-3 rounded shadow-lg transition-all duration-500 z-50">
+          <%= error %>
+        </div>
+    <% } %>
+    
+    <div class="max-w-4xl mx-auto px-6 py-10">
+      <h1 class="text-3xl font-bold mb-6">Bloggers You Follow</h1>
+    
+      <% if (followedBloggers.length === 0) { %>
+        <p class="text-gray-500">You are not following anyone yet.</p>
+      <% } else { %>
+        <div class="grid gap-6">
+          <% followedBloggers.forEach(blogger => { %>
+            <div class="flex items-center justify-between bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition">
+              
+              <!-- Blogger Info -->
+              <div class="flex items-center space-x-4">
+                <img src="<%= blogger.profileImageURL || '/images/user' %>" alt="Profile" class="w-12 h-12 rounded-full object-cover">
+                <div>
+                  <p class="text-lg font-medium text-gray-800"><%= blogger.username %></p>
+                </div>
+              </div>
+    
+              <!-- Action Buttons -->
+              <div class="flex space-x-2">
+                <!-- View Blogs -->
+                <a href="/blog/<%= blogger._id %>/blogs" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-semibold transition-all">
+                  View Blogs →
+                </a>
+    
+                <!-- Unfollow -->
+                <form action="/user/unfollow/<%= blogger._id %>" method="POST">
+                  <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm font-semibold transition-all">
+                    Unfollow
+                  </button>
+                </form>
+              </div>
+    
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+    </div>
+    
+    <!-- Include your scripts -->
+      <%- include('./partials/script') %>
+</body>
+</html>

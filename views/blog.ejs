@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('./partials/head') %>
+    <title>BlogPage</title>
+</head>
+<body class="bg-gray-100">
+    <%- include ('./partials/nav') %>
+    
+
+    <!-- Flash messages (will show on top of the page) -->
+    <% if (success && success.length > 0) { %>
+        <div id="flash-success" class="fixed top-6 right-6 bg-green-100 text-green-800 border border-green-400 px-4 py-3 rounded shadow-lg transition-all duration-500 z-50">
+            <%= success %>
+        </div>
+    <% } %>
+    <% if (error && error.length > 0) { %>
+        <div id="flash-error" class="fixed top-6 right-6 bg-red-100 text-red-800 border border-red-400 px-4 py-3 rounded shadow-lg transition-all duration-500 z-50">
+            <%= error %>
+        </div>
+    <% } %>
+
+
+    <div class="container mx-auto mt-10 px-4">
+        <h2 class="text-3xl font-semibold mb-4 text-gray-800">Create a New Blog</h2>
+
+        <form action="/blog/create" method="POST" enctype="multipart/form-data" class="space-y-6">
+            <!-- Cover Image Upload (first field) -->
+            <div class="mb-3">
+                <label for="coverImage" class="block text-sm font-medium text-gray-700">Upload Cover Image</label>
+                <input 
+                    type="file" 
+                    name="coverImage" 
+                    id="coverImage" 
+                    accept="image/*" 
+                    class="block mt-2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+            </div>
+        
+            <!-- Blog Title -->
+            <div class="mb-3">
+                <label for="title" class="block text-sm font-medium text-gray-700">Blog Title</label>
+                <input 
+                    type="text" 
+                    id="title" 
+                    name="title" 
+                    required 
+                    class="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+            </div>
+        
+            <!-- Blog Body -->
+            <div class="mb-3">
+                <label for="body" class="block text-sm font-medium text-gray-700">Blog Content</label>
+                <textarea 
+                    id="body" 
+                    name="body" 
+                    rows="6" 
+                    required 
+                    class="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                ></textarea>
+            </div>
+        
+            <!-- Submit -->
+            <button 
+                type="submit" 
+                class="w-full py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+                Publish Blog
+            </button>
+        </form>  
+    </div>
+
+
+    <%- include('./partials/script') %>
+</body>
+</html>

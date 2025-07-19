@@ -1,0 +1,37 @@
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const dropdownBtn = document.getElementById('userDropdownBtn');
+      const dropdownMenu = document.getElementById('userDropdownMenu');
+  
+      if (dropdownBtn && dropdownMenu) {
+        dropdownBtn.addEventListener('click', function () {
+          dropdownMenu.classList.toggle('hidden');
+        });
+  
+        // Optional: Hide dropdown if clicked outside
+        document.addEventListener('click', function (event) {
+          if (!dropdownBtn.contains(event.target) && !dropdownMenu.contains(event.target)) {
+            dropdownMenu.classList.add('hidden');
+          }
+        });
+      }
+    });
+  </script>
+  
+<script>
+    setTimeout(() => {
+        const successEl = document.getElementById('flash-success');
+        const errorEl = document.getElementById('flash-error');
+
+        if (successEl) successEl.style.opacity = '0';
+        if (errorEl) errorEl.style.opacity = '0';
+
+        setTimeout(() => {
+            if (successEl) successEl.remove();
+            if (errorEl) errorEl.remove();
+        }, 500); // Wait for fade-out animation
+    }, 3000); // Show for 3 seconds
+</script>
+
+
