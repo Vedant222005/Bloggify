@@ -5,24 +5,24 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "build:css": "npx postcss public/styles/input.css -o public/styles/output.css"
+    "build:css": "npx postcss public/styles/input.css -o public/styles/output.css",
+    "build": "npm run build:css",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.7",
+    "dotenv": "^16.6.1",
     "ejs": "^3.1.10",
-    "express": "^5.1.0",
+    "express": "^4.21.2",
     "express-session": "^1.18.1",
-    "json": "^11.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.13.2",
     "multer": "^1.4.5-lts.2",
     "passport": "^0.7.0",
-    "passport-local": "^1.0.0",
-    "token": "^0.1.0",
-    "web": "^0.0.2"
+    "passport-local": "^1.0.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.4",
@@ -32,6 +32,14 @@
     "postcss-cli": "^11.0.1",
     "tailwindcss": "^4.1.4"
   },
-  "keywords": [],
-  "description": ""
+  "keywords": [
+    "blog",
+    "express",
+    "mongodb",
+    "ejs"
+  ],
+  "description": "A blogging application built with Express.js, MongoDB, and EJS",
+  "engines": {
+    "node": ">=18.0.0"
+  }
 }
