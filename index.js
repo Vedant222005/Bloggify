@@ -6,19 +6,27 @@ require('dotenv').config();
 const cookieParser = require('cookie-parser');
 const blogRoute = require('./routes/blog');
 const userRoute = require('./routes/user');
-const PORT = process.env.PORT || 8000;
 const Blog = require('./models/blog');
 const mongoose = require('mongoose');
 
 const session = require('express-session');
 const flash = require('connect-flash');
+const MongoStore = require('connect-mongo');
 const { checkForAuthentication } = require('./middleware/auth');
 
-// Middleware setup
+const PORT = process.env.PORT || 8000;
+
+// ----------------------
+// Session Middleware
+// ----------------------
 app.use(session({
   secret: process.env.SESSION_SECRET || 'vedant123',
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URI,
+    ttl: 14 * 24 * 60 * 60 // 14 days
+  }),
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
@@ -26,6 +34,9 @@ app.use(session({
   }
 }));
 
+// ----------------------
+// Global Middleware
+// ----------------------
 app.use(express.static('public'));
 app.use(flash());
 app.use(cookieParser());
@@ -40,20 +51,15 @@ app.use((req, res, next) => {
   next();
 });
 
-// View engine setup
+// ----------------------
+// View Engine Setup
+// ----------------------
 app.set('view engine', 'ejs');
 app.set('views', path.resolve('./views'));
 
-// MongoDB connection with proper error handling
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB connected successfully'))
-  .catch((err) => {
-    console.error('MongoDB connection error:', err);
-    process.exit(1);
-  });
-
+// ----------------------
 // Routes
+// ----------------------
 app.get('/', async (req, res) => {
   try {
     const allBlogs = await Blog.find({})
@@ -65,7 +71,6 @@ app.get('/', async (req, res) => {
       blogs: allBlogs
     });
   } catch (err) {
-    console.error('Error fetching blogs:', err);
     req.flash('error', 'Failed to load blogs');
     return res.render('home', {
       user: req.user,
@@ -84,14 +89,22 @@ app.use('*', (req, res) => {
 
 // Global error handler
 app.use((err, req, res, next) => {
-  console.error('Global error:', err);
   res.status(500).render('error', { 
     user: req.user, 
     error: process.env.NODE_ENV === 'production' ? 'Something went wrong!' : err.message 
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server started at http://localhost:${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+// ----------------------
+// MongoDB Connection + Server Start
+// ----------------------
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => {
+  app.listen(PORT);
+})
+.catch((err) => {
+  process.exit(1);
 });
