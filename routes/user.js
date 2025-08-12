@@ -18,11 +18,6 @@ router.get('/profile',(req,res)=>{
 })
 
  
-router.get('/coverpage', async (req, res) => {
-  res.render('coverpage', {
-    user: req.user // ✅ pass user to avoid ReferenceError
-  });
-});
 
 // Multer setup
 const storage = multer.diskStorage({
@@ -83,15 +78,15 @@ router.post('/signup', async (req, res) => {
   try {
     const token = await User.ismatchedAndGenrateToken(email, password);
     req.flash('success', 'Successfully signed in!');
-    return res.cookie("token",token).redirect('/user/coverpage');
+    return res.cookie("token",token).redirect('/');
   } catch (err) {
     req.flash('error', err.message);
-    return res.redirect('/');
+    return res.redirect('/home');
   }
 });
 
 router.get("/logout",(req,res)=>{
-  res.clearCookie("token").redirect("/user/coverpage")
+  res.clearCookie("token").redirect("/home")
 })
 
 router.post('/follow/:id', async (req, res) => {
@@ -109,7 +104,7 @@ router.post('/follow/:id', async (req, res) => {
   } catch (err) {
     console.error(err);
     req.flash('error', 'Something went wrong!');
-    res.redirect('/');
+    res.redirect('/home');
   }
 });
 
@@ -127,7 +122,7 @@ router.post('/unfollow/:id', async (req, res) => {
   } catch (err) {
     console.error(err);
     req.flash('error', 'Something went wrong.');
-    res.redirect('/');
+    res.redirect('/home');
   }
 });
 
@@ -147,7 +142,7 @@ router.get('/followed-bloggers', async (req, res) => {
   } catch (err) {
     console.error(err);
     req.flash('error', 'Something went wrong!');
-    res.redirect('/');
+    res.redirect('/home');
   }
 });
 

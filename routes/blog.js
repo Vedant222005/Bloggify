@@ -36,7 +36,7 @@ router.get('/:id', async (req, res) => {
   } catch (err) {
     console.error(err);
     req.flash('error', 'Something went wrong!');
-    res.redirect('/');
+    res.redirect('/home');
   }
 });
 
@@ -57,7 +57,7 @@ router.post('/create', upload.single('coverImage'),async (req, res) => {
     res.redirect(`/blog/${blog._id}`);
   } catch (err) {
     req.flash('error', 'Something went wrong while creating the blog.');
-    res.redirect('/'); // Redirect user back to the form page
+    res.redirect('/home'); // Redirect user back to the form page
   }
 });
 
@@ -88,7 +88,7 @@ router.post('/:id/like', async (req, res) => {
   } catch (err) {
     console.error(err);
     req.flash('error', 'Something went wrong while liking the blog');
-    res.redirect('/'); 
+    res.redirect('/home'); 
   }
 });
 
@@ -126,7 +126,7 @@ router.post('/:id/like', async (req, res) => {
       // Log the error and show an error message
       console.error(err);
       req.flash('error', 'Failed to add comment');
-      res.redirect('/');
+      res.redirect('/home');
     }
   });
   
@@ -139,14 +139,15 @@ router.post('/:id/like', async (req, res) => {
         // Proceed to delete the blog if the user is the author
         await Blog.deleteOne({ _id: blogId });
         req.flash('success', 'Blog deleted successfully!');
-        res.redirect('/'); // Redirect to homepage after successful deletion
+        res.redirect('/home'); // Redirect to homepage after successful deletion
 
     } catch (err) {
         console.error(err);
         req.flash('err', 'Something went wrong!');
-        res.redirect('/');
+        res.redirect('/home');
     }
 });
+
 
 router.get('/:id/blogs', async (req, res) => {
   try {
@@ -155,7 +156,7 @@ router.get('/:id/blogs', async (req, res) => {
     const blogger = await User.findById(bloggerId);
     if (!blogger) {
       req.flash('error', 'Blogger does not exist');
-      return res.redirect('/');
+      return res.redirect('/home');
     }
     // Fetch blogs by that blogger
     const allBlogs = await Blog.find({ createdBy: bloggerId }).sort({ createdAt: -1 });
@@ -167,7 +168,7 @@ router.get('/:id/blogs', async (req, res) => {
   } catch (err) {
     console.error(err);
     req.flash('error', 'Something went wrong!');
-    return res.redirect('/');
+    return res.redirect('/home');
   }
 });
 
